@@ -757,6 +757,57 @@ public class SMTThroughPP extends Translator {
 	}
 
 	/**
+	 * Generates the translated SMT-LIB formula for the empty set existence axiom: 
+	 * 
+	 * <code> ∃X ∀x·x ∉ X</code>
+	 * 
+	 * @return the SMTFormula representing the translated axiom
+	 */
+	private SMTFormula generateEmptysetAxiom(
+			final SMTPredicateSymbol membershipPredSymbol) {
+		final SMTSortSymbol[] membershipArgSorts = membershipPredSymbol
+				.getArgSorts();
+		final int MembersNumber = membershipArgSorts.length - 1;
+		final SMTSortSymbol setSort = membershipArgSorts[MembersNumber];
+		// creates the quantified set variable with fresh name X
+		final String setX = signature.freshSymbolName("X");
+		final SMTTerm termX = SMTFactory.makeVar(setX, setSort);
+
+		// creates the quantified element variables with fresh names {x}
+		final SMTTerm[] xTerms = new SMTTerm[MembersNumber];
+		final SMTTerm[] xMembershipArgs = new SMTTerm[membershipArgSorts.length];
+		for (int i = 0; i < MembersNumber; i++) {
+			final String xVar = signature.freshSymbolName("x");
+			final SMTTerm xTerm = SMTFactory.makeVar(xVar,
+					membershipArgSorts[i]);
+			xTerms[i] = xTerm;
+			xMembershipArgs[i] = xTerm;
+		}
+		xMembershipArgs[MembersNumber] = termX;
+
+		// creates the membership formulas  x ∈ X
+		final SMTFormula xMembershipFormula = SMTFactory.makeAtom(
+				membershipPredSymbol, xMembershipArgs, signature);
+
+		// creates the negation for membership  x ∉ X
+		final SMTFormula negM = SMTFactory.makeNot(new SMTFormula[] { 
+				xMembershipFormula});
+
+		// creates the quantified formula ∀x·x ∉ X
+		final SMTFormula xForall = SMTFactory.makeForAll(xTerms, negM);
+		
+		// creates the set existential ∃X ∀x·x ∉ X
+		final SMTFormula existsX = SMTFactory.makeExists(
+				new SMTTerm[] { termX }, xForall);
+
+		// creates the axiom
+		final SMTFormula axiom = existsX;
+
+		axiom.setComment("Empty set axiom: ∃X ∀x·x ∉ X");
+		return axiom;
+	}
+
+	/**
 	 * Generates the SMT-LIB formula for the singleton part of elementary sets
 	 * axiom event-B formula:
 	 * <code>∀ x ⦂ ℤ · (∃ X ⦂ ℙ(ℤ) · (x ∈ X ∧ (∀ y ⦂ ℤ · (y ∈ X ⇒ x = y))))</code>
@@ -1030,6 +1081,7 @@ public class SMTThroughPP extends Translator {
 		int i = 0;
 		for (final Map.Entry<Type, SMTPredicateSymbol> entry : msTypeMap.entrySet()) {
 			translatedAssumptions.add(i, generateSingletonAxiom(entry.getValue()));
+			translatedAssumptions.add(i, generateEmptysetAxiom(entry.getValue()));
 			i++;
 		}
 
