@@ -151,6 +151,15 @@ public abstract class SMTSignatureV2_0 extends SMTSignature {
 			final String newSymbolName) {
 		final String freshName;
 		/**
+		 * Avoids creating names with apostrophes
+		 */
+		int apoInd = name.indexOf('\'');
+		if (apoInd > -1) {
+			final String newName = name.substring(0, apoInd) + '$' +
+				name.substring(apoInd + 1);
+			return freshSymbolName(symbolNames, newName, newSymbolName);
+		}
+		/**
 		 * Avoids creating names similar to reserved symbols, predefined symbols
 		 * or keywords
 		 */
