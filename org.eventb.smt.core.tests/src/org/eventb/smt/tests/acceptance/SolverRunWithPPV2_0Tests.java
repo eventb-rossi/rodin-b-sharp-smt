@@ -34,6 +34,14 @@ public abstract class SolverRunWithPPV2_0Tests extends SolverRunTests {
 	}
 
 	@Test
+	public void testApostrophe() {
+		final List<String> hyps = Arrays.asList( //
+				"x' = y");
+
+		doTest("unsat", hyps, "y = x'", arith_te, VALID);
+	}
+
+	@Test
 	public void unsatCall() {
 		final List<String> hyps = Arrays.asList( //
 				"x < y", //
