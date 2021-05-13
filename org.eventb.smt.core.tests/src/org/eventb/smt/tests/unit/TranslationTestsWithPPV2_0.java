@@ -618,6 +618,15 @@ public class TranslationTestsWithPPV2_0 extends AbstractTests {
 
 		testContainsAssumptionsPP(te, "a + b ↦ ℤ ∈ AZ", expectedAssumptions);
 	}
+	
+	@Test
+	public void testEmptysetAxiom() {
+		final ITypeEnvironment te = defaultTe;
+		final List<String> expectedAssumptions = Arrays
+				.asList("(exists ((X1 PZ)) (forall ((x1 Int)) (not (MS x1 X1))))", //
+						"(forall ((x0 Int)) (exists ((X0 PZ)) (and (MS x0 X0) (forall ((y Int)) (=> (MS y X0) (= y x0))))))");
+		testContainsAssumptionsPP(te, "∃ x, X ⦂ ℙ(ℤ) · x ∈ X", expectedAssumptions);
+	}
 
 	@Test
 	public void testTrueAxiom() {
