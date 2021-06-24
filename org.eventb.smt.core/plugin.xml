@@ -54,12 +54,22 @@
             id="autoTactic"
             name="%SMTAuto.name">
       </autoTactic>
+      <autoTactic
+            class="org.eventb.smt.core.internal.tactics.SMTInterTactic"
+            description="%SMTInter.description"
+            id="interTactic"
+            name="%SMTInter.name">
+      </autoTactic>
    </extension>
    <extension
          point="org.eventb.core.tacticProfiles">
       <tacticProfile
             class="org.eventb.smt.core.internal.tactics.DefaultAutoWithSMT$Contribution"
             name="Default Auto Tactic with SMT">
+      </tacticProfile>
+      <tacticProfile
+            class="org.eventb.smt.core.internal.tactics.DefaultInterWithSMT$Contribution"
+            name="Default Interactive Tactic with SMT">
       </tacticProfile>
    </extension>
 </plugin>

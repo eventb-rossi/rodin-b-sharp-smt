@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eventb.smt.core.internal.prefs.AbstractPreferences;
 import org.eventb.smt.core.internal.tactics.SMTAutoTactic;
+import org.eventb.smt.core.internal.tactics.SMTInterTactic;
 import org.eventb.smt.core.internal.translation.Translator;
 import org.osgi.framework.BundleContext;
 
@@ -66,6 +67,7 @@ public class SMTProversCore extends Plugin {
 	private void configureDebugOptions() {
 		AbstractPreferences.DEBUG = parseOption(DEBUG_PREFS);
 		SMTAutoTactic.DEBUG = parseOption(DEBUG_TACTICS);
+		SMTInterTactic.DEBUG = parseOption(DEBUG_TACTICS);
 		Translator.DEBUG = parseOption(DEBUG_TRANSLATOR);
 		Translator.DEBUG_DETAILS = parseOption(DEBUG_TRANSLATOR_DETAILS);
 	}

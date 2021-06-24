@@ -41,6 +41,13 @@ public class SMTCore {
 			.getTacticDescriptor(PLUGIN_ID + ".autoTactic");
 
 	/**
+	 * Descriptor of the interactive-tactic that runs each enabled solver on the
+	 * current sequent in parallel until first one discharges it.
+	 */
+	public static final ITacticDescriptor smtInterTactic = getAutoTacticRegistry()
+			.getTacticDescriptor(PLUGIN_ID + ".interTactic");
+
+	/**
 	 * Returns a tactic descriptor for running the given SMT solver
 	 * configuration. This method does not verify that the configuration has
 	 * been registered. The tactic is configured with the default values for the

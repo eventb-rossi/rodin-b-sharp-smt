@@ -49,7 +49,7 @@ public class SMTAutoTactic implements ITactic {
 	 * Sub-class for initializing the list of tactics in a lazy manner. This
 	 * class is also responsible for maintaining it up to date.
 	 */
-	private static class TacticsHolder implements IPreferencesChangeListener,
+	protected static class TacticsHolder implements IPreferencesChangeListener,
 			IPreferenceChangeListener {
 
 		static {
