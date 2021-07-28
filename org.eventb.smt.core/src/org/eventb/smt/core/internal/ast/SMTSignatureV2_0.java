@@ -22,10 +22,10 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eventb.smt.core.internal.ast.attributes.Label;
+import org.eventb.smt.core.internal.ast.commands.Command.SMTCommandName;
 import org.eventb.smt.core.internal.ast.commands.DeclareFunCommand;
 import org.eventb.smt.core.internal.ast.commands.DeclareSortCommand;
 import org.eventb.smt.core.internal.ast.commands.SetLogicCommand;
-import org.eventb.smt.core.internal.ast.commands.Command.SMTCommandName;
 import org.eventb.smt.core.internal.ast.symbols.SMTQuantifierSymbol;
 import org.eventb.smt.core.internal.ast.symbols.SMTSortSymbol;
 import org.eventb.smt.core.internal.ast.symbols.SMTSymbol;
@@ -150,15 +150,6 @@ public abstract class SMTSignatureV2_0 extends SMTSignature {
 	String freshSymbolName(final Set<String> symbolNames, final String name,
 			final String newSymbolName) {
 		final String freshName;
-		/**
-		 * Avoids creating names with apostrophes
-		 */
-		int apoInd = name.indexOf('\'');
-		if (apoInd > -1) {
-			final String newName = name.substring(0, apoInd) + '$' +
-				name.substring(apoInd + 1);
-			return freshSymbolName(symbolNames, newName, newSymbolName);
-		}
 		/**
 		 * Avoids creating names similar to reserved symbols, predefined symbols
 		 * or keywords

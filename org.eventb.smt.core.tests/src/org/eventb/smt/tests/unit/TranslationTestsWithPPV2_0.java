@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 Systerel and others.
+ * Copyright (c) 2011, 2021 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     ISP RAS - added test for the axiom of empty set
  *******************************************************************************/
 package org.eventb.smt.tests.unit;
 
@@ -618,9 +619,9 @@ public class TranslationTestsWithPPV2_0 extends AbstractTests {
 
 		testContainsAssumptionsPP(te, "a + b ↦ ℤ ∈ AZ", expectedAssumptions);
 	}
-	
+
 	@Test
-	public void testEmptysetAxiom() {
+	public void testEmptySetAxiom() {
 		final ITypeEnvironment te = defaultTe;
 		final List<String> expectedAssumptions = Arrays
 				.asList("(exists ((X1 PZ)) (forall ((x1 Int)) (not (MS x1 X1))))", //

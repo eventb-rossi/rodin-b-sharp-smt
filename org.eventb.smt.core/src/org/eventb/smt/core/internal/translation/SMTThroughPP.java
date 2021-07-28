@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 Systerel and others.
+ * Copyright (c) 2010, 2021 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     ISP RAS - added the axiom of empty set
  *******************************************************************************/
 package org.eventb.smt.core.internal.translation;
 
@@ -757,13 +758,13 @@ public class SMTThroughPP extends Translator {
 	}
 
 	/**
-	 * Generates the translated SMT-LIB formula for the empty set existence axiom: 
+	 * Generates the translated SMT-LIB formula for the empty set existence axiom:
 	 * 
-	 * <code> ∃X ∀x·x ∉ X</code>
+	 * <code> ∃X·(∀x·x ∉ X)</code>
 	 * 
 	 * @return the SMTFormula representing the translated axiom
 	 */
-	private SMTFormula generateEmptysetAxiom(
+	private SMTFormula generateEmptySetAxiom(
 			final SMTPredicateSymbol membershipPredSymbol) {
 		final SMTSortSymbol[] membershipArgSorts = membershipPredSymbol
 				.getArgSorts();
@@ -785,26 +786,23 @@ public class SMTThroughPP extends Translator {
 		}
 		xMembershipArgs[MembersNumber] = termX;
 
-		// creates the membership formulas  x ∈ X
+		// creates the membership formulas x ∈ X
 		final SMTFormula xMembershipFormula = SMTFactory.makeAtom(
 				membershipPredSymbol, xMembershipArgs, signature);
 
-		// creates the negation for membership  x ∉ X
-		final SMTFormula negM = SMTFactory.makeNot(new SMTFormula[] { 
+		// creates the negation for membership x ∉ X
+		final SMTFormula negM = SMTFactory.makeNot(new SMTFormula[] {
 				xMembershipFormula});
 
 		// creates the quantified formula ∀x·x ∉ X
 		final SMTFormula xForall = SMTFactory.makeForAll(xTerms, negM);
-		
-		// creates the set existential ∃X ∀x·x ∉ X
+
+		// creates the set existential ∃X·(∀x·x ∉ X)
 		final SMTFormula existsX = SMTFactory.makeExists(
 				new SMTTerm[] { termX }, xForall);
 
-		// creates the axiom
-		final SMTFormula axiom = existsX;
-
-		axiom.setComment("Empty set axiom: ∃X ∀x·x ∉ X");
-		return axiom;
+		existsX.setComment("Empty set axiom: ∃X·(∀x·x ∉ X)");
+		return existsX;
 	}
 
 	/**
@@ -1081,7 +1079,7 @@ public class SMTThroughPP extends Translator {
 		int i = 0;
 		for (final Map.Entry<Type, SMTPredicateSymbol> entry : msTypeMap.entrySet()) {
 			translatedAssumptions.add(i, generateSingletonAxiom(entry.getValue()));
-			translatedAssumptions.add(i, generateEmptysetAxiom(entry.getValue()));
+			translatedAssumptions.add(i, generateEmptySetAxiom(entry.getValue()));
 			i++;
 		}
 
