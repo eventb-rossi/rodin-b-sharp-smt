@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2017 Systerel and others.
+ * Copyright (c) 2013, 2021 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     ISP RAS - inserted smtAutoTactic without lasso
  *******************************************************************************/
 package org.eventb.smt.core.internal.tactics;
 
@@ -148,6 +149,7 @@ public class DefaultAutoWithSMT {
 		beforeDesc = REGISTRY.getTacticDescriptor(BEFORE_TACTIC_ID);
 		final int index = newTactics.indexOf(beforeDesc);
 		newTactics.add(index, smtAutoInLasso());
+		newTactics.add(index, smtAutoTactic);
 	}
 
 	/*

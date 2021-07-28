@@ -194,7 +194,7 @@ public class DefaultInterWithSMT {
 			REGISTRY.getTacticDescriptor(ML_TACTIC_ID),
 			REGISTRY.getTacticDescriptor(P0_TACTIC_ID),
 			smtInterTactic,
-			smtAutoInLasso()
+			smtInterInLasso()
 		);
 		return FIRST_SUCCESFUL.combine(list, FIRST_ID);
 	}
@@ -203,7 +203,7 @@ public class DefaultInterWithSMT {
 	 * Returns a tactic descriptor for running the SMT interactive-tactic embedded
 	 * within an attempt after lasso.
 	 */
-	private ITacticDescriptor smtAutoInLasso() {
+	private ITacticDescriptor smtInterInLasso() {
 		final List<ITacticDescriptor> list = singletonList(smtInterTactic);
 		return ATTEMPT_AFTER_LASSO.combine(list, LASSO_ID);
 	}
