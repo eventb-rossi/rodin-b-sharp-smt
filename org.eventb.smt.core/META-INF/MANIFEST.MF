@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eventb.pptrans,
  org.eventb.core
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: 
  org.eventb.smt.core,
  org.eventb.smt.core.internal.ast;x-friends:="org.eventb.smt.core.tests",
