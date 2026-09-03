@@ -1080,7 +1080,10 @@ public class SMTThroughPP extends Translator {
 		for (final Map.Entry<Type, SMTPredicateSymbol> entry : msTypeMap.entrySet()) {
 			translatedAssumptions.add(i, generateSingletonAxiom(entry.getValue()));
 			translatedAssumptions.add(i, generateEmptySetAxiom(entry.getValue()));
-			i++;
+			// Two axioms are inserted per membership predicate, so advance by
+			// two; incrementing by one interleaves the axioms of successive
+			// predicates instead of keeping each pair together.
+			i += 2;
 		}
 
 		final SMTBenchmarkPP benchmark = new SMTBenchmarkPP(lemmaName,
