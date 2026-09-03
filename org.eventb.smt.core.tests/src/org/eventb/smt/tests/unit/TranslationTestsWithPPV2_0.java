@@ -713,8 +713,15 @@ public class TranslationTestsWithPPV2_0 extends AbstractTests {
 	@Test
 	public void testExtensions() throws Exception {
 		final ITypeEnvironment te = org.eventb.core.ast.tests.AbstractTests.LIST_FAC.makeTypeEnvironment();
+		// The x<n> names come from the AST's fresh-identifier counter while it
+		// translates the datatype, so they shift whenever the datatype
+		// translator allocates a different number of intermediate identifiers.
+		// They dropped by four between Rodin 3.5, which this test was written
+		// against, and Rodin 3.10, which reworked DatatypeTranslator.  The
+		// formula is otherwise unchanged, so update the names rather than
+		// weakening the assertion: the shape is what this test exists to check.
 		testTranslateGoalPP(te, "head(cons(1, nil)) = 2",
-				"(not (exists ((x57 List_Type) (x58 Int)) (and (exists ((x59 Int)) (and (= x59 1) (cons x59 nil x57))) (= x58 2) (head x57 x58))))");
+				"(not (exists ((x53 List_Type) (x54 Int)) (and (exists ((x55 Int)) (and (= x55 1) (cons x55 nil x53))) (= x54 2) (head x53 x54))))");
 	}
 
 	@Test
