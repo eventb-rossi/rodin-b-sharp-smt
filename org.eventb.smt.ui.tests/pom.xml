@@ -28,15 +28,18 @@
 					<includes>
 						<include>**/*Test*.java</include>
 					</includes>
-					<dependencies>
-						<!-- Depend on full Rodin platform in order to -->
-						<!-- install platform specific fragments of Eclipse -->
-						<dependency>
-							<type>eclipse-feature</type>
-							<artifactId>org.eventb.ide</artifactId>
-							<version>0.0.0</version>
-						</dependency>
-					</dependencies>
+					<!--
+					    Upstream additionally installed the org.eventb.ide
+					    feature here, to pull in the platform-specific Eclipse
+					    fragments.  That only resolves when a Rodin p2 site is
+					    in the target platform, which the bundle build
+					    deliberately omits so that Tycho cannot prefer a stock
+					    Rodin over the one built alongside.  The UI harness
+					    already brings SWT and the workbench, which is all this
+					    test needs.  Upstream made the same removal for
+					    org.eventb.smt.core.tests in "Upgrade Tycho version and
+					    fix test dependencies" but did not touch this module.
+					-->
 				</configuration>
 			</plugin>
 		</plugins>
