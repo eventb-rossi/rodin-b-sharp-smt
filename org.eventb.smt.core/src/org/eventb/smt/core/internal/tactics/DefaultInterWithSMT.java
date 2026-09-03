@@ -167,12 +167,20 @@ public class DefaultInterWithSMT {
 	}
 	
 	/*
-	 * Delete ml and p0 tactics from the newTactics list.
-	 * TODO: make it more failproof.
+	 * Removes the ML and P0 tactics from the list: insertIntoList() puts them
+	 * back inside the parallel combinator, so leaving them here would run them
+	 * a second time, sequentially, defeating the point of the profile.
+	 *
+	 * Matching on the tactic id rather than on a position keeps this correct if
+	 * the sequent prover ever reorders its default auto tactic. It also works
+	 * when the Atelier B provers are not installed: the registry then yields a
+	 * placeholder descriptor that still carries the requested id.
 	 */
 	private void removeFromList() {
-		newTactics.remove(newTactics.size() - 2);
-		newTactics.remove(newTactics.size() - 2);
+		newTactics.removeIf(desc -> {
+			final String id = desc.getTacticID();
+			return ML_TACTIC_ID.equals(id) || P0_TACTIC_ID.equals(id);
+		});
 	}
 
 	/*
