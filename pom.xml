@@ -8,12 +8,12 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>2.5.0</tycho-version>
-		<maven-resources-plugin-version>2.6</maven-resources-plugin-version>
+		<tycho-version>4.0.9</tycho-version>
+		<maven-resources-plugin-version>3.2.0</maven-resources-plugin-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<!-- TO BE CONFIGURED WHEN CALLING MAVEN USING OPTION -D -->
-		<rodinTargetSiteUrl>jar:file:/var/tmp/org.rodinp.dev-3.5.0-9f39f1653.zip!/</rodinTargetSiteUrl>
+		<!-- Eclipse release the Rodin platform is built against (Rodin 3.10). -->
+		<eclipse-p2-url>https://download.eclipse.org/eclipse/updates/4.38/</eclipse-p2-url>
 	</properties>
 
 	<modules>
@@ -112,24 +112,19 @@
 							<arch>x86_64</arch>
 						</environment>
 						<environment>
-							<os>linux</os>
-							<ws>gtk</ws>
-							<arch>x86</arch>
-						</environment>
-						<environment>
 							<os>win32</os>
 							<ws>win32</ws>
 							<arch>x86_64</arch>
-						</environment>
-						<environment>
-							<os>win32</os>
-							<ws>win32</ws>
-							<arch>x86</arch>
 						</environment>
 						<environment>
 							<os>macosx</os>
 							<ws>cocoa</ws>
 							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>macosx</os>
+							<ws>cocoa</ws>
+							<arch>aarch64</arch>
 						</environment>
 					</environments>
 				</configuration>
@@ -138,11 +133,40 @@
 	</build>
 
 	<repositories>
+		<!--
+		    Eclipse is always resolved from the release site.  The Rodin
+		    platform is not listed here on purpose: in the Rodin-Bundles
+		    reactor the Rodin bundles are reactor artifacts, and adding a p2
+		    site for them would let Tycho resolve a stock Rodin build over the
+		    one being built alongside.  For a standalone build of this plug-in,
+		    pass -DrodinTargetSiteUrl=<p2 url> to activate the profile below.
+		-->
 		<repository>
-			<id>Rodin-platform</id>
+			<id>eclipse</id>
 			<layout>p2</layout>
-			<url>${rodinTargetSiteUrl}</url>
+			<url>${eclipse-p2-url}</url>
 		</repository>
 	</repositories>
+
+	<profiles>
+		<profile>
+			<!-- Standalone build: resolve Rodin from a published p2 site, e.g.
+			     -DrodinTargetSiteUrl=https://rodin-b-sharp.sourceforge.net/core-updates/3.10/
+			     or a local org.rodinp.dev repository. -->
+			<id>standalone-rodin</id>
+			<activation>
+				<property>
+					<name>rodinTargetSiteUrl</name>
+				</property>
+			</activation>
+			<repositories>
+				<repository>
+					<id>Rodin-platform</id>
+					<layout>p2</layout>
+					<url>${rodinTargetSiteUrl}</url>
+				</repository>
+			</repositories>
+		</profile>
+	</profiles>
 
 </project>
