@@ -1,0 +1,93 @@
+name: CI
+
+# Standalone build of the SMT plug-ins, outside the Rodin-Bundle reactor.  In
+# the bundle the Rodin bundles they compile against are reactor artifacts; on
+# their own they have to come from a published p2 site, which is what the root
+# POM's `standalone-rodin` profile is for.  It contributes ${rodinTargetSiteUrl}
+# as a repository whenever that property is set.
+#
+# That site has to be *our* Rodin, not the stock one on SourceForge.  This fork
+# uses BasicTactics.firstSuccessful and the matching
+# org.eventb.core.seqprover.firstSuccessful tactic combinator, both ISP RAS
+# additions carried only in eventb-rossi/rodincore.  Stock Rodin 3.10 ships
+# org.eventb.core.seqprover under the same 3.8.0 version without them, so a
+# build against SourceForge fails to compile and an install onto a stock Rodin
+# would fail at prove time.
+#
+# The last Rodin-Bundle release is the cheap stand-in for a reactor: one 70 MB
+# download instead of rebuilding rodincore.  It does mean this checks the fork
+# against the last released platform rather than rodincore's tip; the bundle's
+# own CI is what covers the tip.
+#
+# The two test plug-ins stay out of this reactor.  They require
+# org.eventb.core.seqprover.tests, and test bundles belong to no feature, so no
+# update site publishes one.  They are only resolvable alongside rodincore
+# itself, which is where the bundle build runs them.
+
+on:
+  push:
+    branches: [rossi]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build against the released Rodin bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
+        with:
+          java-version: '21'
+          distribution: temurin
+
+      - name: Cache the local Maven repository
+        uses: actions/cache@v6
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2-
+
+      - name: Fetch the Rodin bundle update site
+        # Public asset, so no token: a cross-repository GITHUB_TOKEN could not
+        # read it anyway.
+        run: |
+          set -euo pipefail
+          curl -fsSL -o site.zip \
+            https://github.com/eventb-rossi/Rodin-Bundle/releases/latest/download/rodin-bundle-update-site.zip
+          unzip -q site.zip -d rodin-site
+          test -f rodin-site/content.jar
+
+      # No ~/.m2/toolchains.xml, unlike the bundle build: the maven-toolchains
+      # requirement comes from rodincore's org.eventb.parent, and this reactor
+      # has no parent POM.
+      #
+      # version-suffix lands in the OSGi qualifier after the build timestamp,
+      # giving the same yyyyMMddHHmm-<sha> shape the Rodin site publishes.
+      - name: Build
+        run: |
+          mvn -B clean verify \
+            -pl '!org.eventb.smt.core.tests,!org.eventb.smt.ui.tests' \
+            -DrodinTargetSiteUrl="file://$PWD/rodin-site" \
+            -Dversion-suffix="-$(git rev-parse --short HEAD)"
+
+      # Built here to prove the site module still assembles.  It is not what
+      # anyone installs from: the bundle's add-on update site deliberately
+      # leaves this plug-in out, for the reason in the header above, and ships
+      # it inside the product instead.  Uploading it makes a pull request
+      # inspectable without a local Tycho.
+      - name: Upload the update site
+        uses: actions/upload-artifact@v7
+        with:
+          name: update-site
+          path: org.eventb.smt.site/target/repository
+          if-no-files-found: error
