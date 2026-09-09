@@ -1,0 +1,18 @@
+
+Remove a fallthrough annotation that falls through to nothing.
+
+The last case of string_hash's switch ends with Z3_fallthrough; but there is no
+case label after it, only the closing brace.  clang rejects that outright
+("fallthrough annotation does not directly precede switch label"), so Z3 4.5.0
+does not build on a current toolchain.  It is the only such spot in the tree.
+
+--- a/src/util/hash.cpp	2026-09-09 11:51:50.302684073 +0400
++++ b/src/util/hash.cpp	2026-09-09 11:51:50.314038888 +0400
+@@ -83,7 +83,6 @@
+         Z3_fallthrough;
+     case 1 : 
+         a+=str[0];
+-        Z3_fallthrough;
+         /* case 0: nothing left to add */
+     }
+     mix(a,b,c);
