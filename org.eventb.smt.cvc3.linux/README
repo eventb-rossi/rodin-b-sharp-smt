@@ -1,16 +1,35 @@
-The cvc3 binary has been compiled under Ubuntu 10.04.4 with package libgmp3-dev installed.
+The cvc3 binary is built for linux/x86_64 by build.sh, which runs the build in a
+Debian 8 (jessie) container.
 
-The following commands have been used after downloading the CVC3-2.4.1 tarball.
+Two things about that build are not obvious and are easy to get wrong.
 
-	tar zxf cvc3-2.4.1.tar.gz
-	cd cvc3-2.4.1
-	rm src/sat/xchaff_*
-	./configure --disable-zchaff
-	make
+1. The compiler must predate GCC 6.
 
-The binary has been tested by issuing the following additional commands:
+   Every GCC >= 6 rejects CVC3 2.4.1 (std::hash<char*> called on a const char*).
+   The patch that circulates for this -- "Fix gcc v6 compile failures", carried by
+   nixpkgs among others -- redefines CDMap's default HashFcn and
+   ExprValue::s_charHash, and the resulting binary is broken: it links, runs, and
+   answers "This is CVC3 version 2.4.1", but rejects every SMT-LIB 2 input with
 
-	cd test
-	make
-	bin/test
-   
+       *** Eval Error: Unknown command: [_SEQ, [_TYPEDEF, Bool, _BOOLEAN], ...]
+
+   This was reproduced on GCC 15 / bison 3.8 and on GCC 8 / bison 3.3, with and
+   without zchaff.  Building unpatched on GCC 4.9 is correct.
+
+   So a build that has only been checked for compiling proves nothing.  Check it
+   against a known-good CVC3 on real benchmarks.
+
+2. zchaff must be deleted before configuring.
+
+   src/sat/xchaff* is copyright Princeton and its licence forbids distribution
+   ("FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE"; internal, noncommercial,
+   research use only).  It must not end up in a binary we ship.
+
+   The prebuilt binaries on cs.nyu.edu -- including the linux64 ones -- do
+   contain it, which is why they cannot be used here even though they are the
+   right version.  They are still useful as an oracle when checking point 1.
+
+   After a build:  strings -a cvc3 | grep -c CSolver   must print 0.
+
+The binary is statically linked, so the container's glibc does not reach the
+shipped artifact.
