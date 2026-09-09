@@ -5,3 +5,4 @@ Bundle-SymbolicName: org.eventb.smt.cvc3.plugin;singleton:=true
 Bundle-Version: 2.4.1.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
+Eclipse-PlatformFilter: (| (osgi.os=macosx) (& (osgi.os=win32) (osgi.arch=x86_64)) (& (osgi.os=linux) (osgi.arch=x86_64)))

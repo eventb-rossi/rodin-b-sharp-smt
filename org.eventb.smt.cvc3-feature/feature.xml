@@ -3,8 +3,7 @@
       id="org.eventb.smt.cvc3"
       label="%featureName"
       version="2.4.1.qualifier"
-      provider-name="%providerName"
-      arch="x86_64">
+      provider-name="%providerName">
 
    <description>
       %description
@@ -31,7 +30,6 @@
    <plugin
          id="org.eventb.smt.cvc3.macosx"
          os="macosx"
-         arch="x86_64"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -40,6 +38,7 @@
    <plugin
          id="org.eventb.smt.cvc3.linux"
          os="linux"
+         arch="x86_64"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -48,6 +47,7 @@
    <plugin
          id="org.eventb.smt.cvc3.win32"
          os="win32"
+         arch="x86_64"
          download-size="0"
          install-size="0"
          version="0.0.0"

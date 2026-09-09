@@ -3,8 +3,7 @@
       id="org.eventb.smt.z3"
       label="%featureName"
       version="4.5.0.qualifier"
-      provider-name="%providerName"
-      arch="x86_64">
+      provider-name="%providerName">
 
    <description>
       %description
@@ -40,7 +39,6 @@
    <plugin
          id="org.eventb.smt.z3.macosx"
          os="macosx"
-         arch="x86_64"
          download-size="0"
          install-size="0"
          version="0.0.0"
