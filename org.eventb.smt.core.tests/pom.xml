@@ -20,6 +20,12 @@
 				<configuration>
 					<includes>
 						<include>**/*Test*.java</include>
+						<!-- The unsat-core acceptance tests do not match the
+						     *Test* pattern, so they had never run.  They are
+						     the only tests that catch a solver which still
+						     proves but returns a weaker core, which is exactly
+						     what a swapped binary can do. -->
+						<include>**/UnsatCore*.java</include>
 					</includes>
 					<dependencies>
 					</dependencies>
